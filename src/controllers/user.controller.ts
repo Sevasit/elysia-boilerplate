@@ -45,7 +45,7 @@ export const setupUserController = (app: Elysia, userModel: UserModel) => {
             password: t.String(),
           }),
           detail: {
-            tags: ["Auth"],
+            tags: ["User"],
             summary: "Register a new user",
             description:
               "Creates a user with hashed password. Returns user ID on success.",

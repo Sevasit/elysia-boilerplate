@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
   postgres:
@@ -18,21 +18,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  # app:
-  #   build: .
-  #   restart: always
-  #   environment:
-  #     DATABASE_URL: "postgresql://administrator:password@postgres:5432/elysia_db"
-  #     JWT_SECRET: "your-super-secret-jwt-key-change-in-prod"
-  #     NODE_ENV: "production"
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     - postgres
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: "postgresql://administrator:password@postgres:5432/postgres_db"
+      JWT_SECRET: "d43bcea74032904c72dbe7f30c586a19"
+      NODE_ENV: "production"
+      PREFIX: "/api/v1"
+      PORT: "8080"
+    command: "./server"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   postgres_data:

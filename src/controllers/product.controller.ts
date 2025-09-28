@@ -43,7 +43,7 @@ export const setupProductController = (
         {
           detail: {
             tags: ["Products"],
-            summary: "List user products",
+            summary: "Get all products",
             description:
               "Fetches all products owned by the authenticated user.",
           },
