@@ -20,7 +20,7 @@ model User {
   id       Int      @id @default(autoincrement())
   username String   @unique
   password String
-  createdat DateTime @default(now()) @map("createdat")
+  created_date DateTime @default(now()) @map("created_date")
   products Product[]
 }
 
@@ -28,8 +28,8 @@ model Product {
   id          Int      @id @default(autoincrement())
   name        String
   price       Float
-  createdat DateTime @default(now()) @map("createdat")
-  updatedat DateTime @default(now()) @map("updatedat")
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  created_date DateTime @default(now()) @map("created_date")
+  updated_date DateTime @default(now()) @map("updated_date")
+  user_id      Int
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

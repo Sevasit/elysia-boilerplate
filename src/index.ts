@@ -1,11 +1,12 @@
 import { Elysia } from "elysia";
 // import { openapi } from '@elysiajs/openapi';
-import { PrismaClient } from "@prisma/client";
 import { setupAuthController } from "./controllers/auth.controller";
 import { setupProductController } from "./controllers/product.controller";
+import { setupUserController } from "./controllers/user.controller";
 import { UserModel } from "./models/user.model";
 import { ProductModel } from "./models/product.model";
 import cors from "@elysiajs/cors";
+import { PrismaClient } from "../generated/prisma";
 
 const prisma = new PrismaClient({
   log: ["query", "info", "warn", "error"],
@@ -24,6 +25,7 @@ const app = new Elysia({ prefix: "api/v1" })
   .get("/health-check", () => "The Elysia is OK. 🦊")
   .use((app: Elysia) => setupAuthController(app, userModel))
   .use((app: Elysia) => setupProductController(app, productModel))
+  .use((app: Elysia) => setupUserController(app, userModel))
   .listen(process.env.PORT as string);
 
 console.log(

@@ -1,7 +1,8 @@
 import { Elysia, t } from "elysia";
 import { ProductModel } from "../models/product.model";
-import { Response } from "../utils/response";
 import { ProductService } from "../services/product.model";
+import jwt from "@elysiajs/jwt";
+import { Response } from "../utils/response";
 
 export const setupProductController = (
   app: Elysia,
@@ -11,25 +12,31 @@ export const setupProductController = (
 
   return app.group("/products", (app) =>
     app
-      .use(async ({ jwt, headers, set }) => {
-        const token =
-          headers.authorization?.replace("Bearer ", "") ||
-          (await jwt.get(headers.cookie))?.value;
-        if (!token) {
+      .use(
+        jwt({
+          name: "jwt",
+          secret: process.env.JWT_SECRET as string,
+        })
+      )
+      .derive(async ({ jwt, headers, set }) => {
+        const authHeader = headers["authorization"];
+        if (!authHeader) {
+          // handle error for access token is not available
           set.status = 401;
-          return Response.error(401, "Unauthorized", "No token provided");
+          throw new Error("Access token is missing");
         }
-        const payload = await jwt.verify(token);
-        if (!payload) {
-          set.status = 401;
-          return Response.error(401, "Unauthorized", "Invalid token");
+        const token = authHeader.substring(7);
+        const jwtPayload = await jwt.verify(token);
+        if (!jwtPayload) {
+          // handle error for access token is tempted or incorrect
+          set.status = 403;
+          throw new Error("Access token is invalid");
         }
-        return { userId: Number(payload.userId) };
       })
       .get(
         "/get_all",
-        async ({ userId, set }) => {
-          const result = await productService.getAll(userId);
+        async ({ set }) => {
+          const result = await productService.getAll();
           set.status = result.status_code;
           return result;
         },
@@ -43,9 +50,9 @@ export const setupProductController = (
         }
       )
       .post(
-        "/get_detail",
-        async ({ body, userId, set }) => {
-          const result = await productService.create(userId, body);
+        "/create",
+        async ({ body, set }) => {
+          const result = await productService.create(body);
           set.status = result.status_code;
           return result;
         },
@@ -53,6 +60,7 @@ export const setupProductController = (
           body: t.Object({
             name: t.String(),
             price: t.Number(),
+            user_id: t.Number(),
           }),
           detail: {
             tags: ["Products"],
@@ -63,12 +71,8 @@ export const setupProductController = (
       )
       .put(
         "/:id",
-        async ({ params, body, userId, set }) => {
-          const result = await productService.update(
-            Number(params.id),
-            userId,
-            body
-          );
+        async ({ body, params: { id }, set }) => {
+          const result = await productService.update(Number(id), body);
           set.status = result.status_code;
           return result;
         },
@@ -89,8 +93,8 @@ export const setupProductController = (
       )
       .delete(
         "/:id",
-        async ({ params, userId, set }) => {
-          const result = await productService.delete(Number(params.id), userId);
+        async ({ params: { id }, set }) => {
+          const result = await productService.delete(Number(id));
           set.status = result.status_code;
           return result;
         },

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "User"
     id         SERIAL PRIMARY KEY NOT NULL,
     username   VARCHAR(50) CONSTRAINT "User_username_key" UNIQUE NOT NULL,
     password   VARCHAR(255) CONSTRAINT "User_password_nn" NOT NULL,
-    createdAt  TIMESTAMP CONSTRAINT "User_createdAt_nn" NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_date  TIMESTAMP CONSTRAINT "User_created_date_nn" NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create Product table
@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS "Product"
     id          SERIAL PRIMARY KEY NOT NULL,
     name        VARCHAR(100) CONSTRAINT "Product_name_nn" NOT NULL,
     price       NUMERIC(10,2) CONSTRAINT "Product_price_nn" NOT NULL,
-    createdAt   TIMESTAMP CONSTRAINT "Product_createdAt_nn" NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedAt   TIMESTAMP CONSTRAINT "Product_updatedAt_nn" NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    userId      INTEGER CONSTRAINT "Product_userId_nn" NOT NULL,
-    CONSTRAINT "Product_userId_fkey" FOREIGN KEY (userId) REFERENCES "User"(id) ON DELETE CASCADE
+    created_date   TIMESTAMP CONSTRAINT "Product_created_date_nn" NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_date   TIMESTAMP CONSTRAINT "Product_updated_date_nn" NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id      INTEGER CONSTRAINT "Product_user_id_nn" NOT NULL,
+    CONSTRAINT "Product_user_id_fkey" FOREIGN KEY (user_id) REFERENCES "User"(id) ON DELETE CASCADE
 );
 
 -- Create indexes only if they don't exist
@@ -39,10 +39,10 @@ DO $$
 BEGIN
     IF NOT EXISTS (
         SELECT FROM pg_indexes 
-        WHERE indexname = 'Product_userId_idx' 
+        WHERE indexname = 'Product_user_id_idx' 
         AND schemaname = 'public'
     ) THEN
-        CREATE INDEX "Product_userId_idx" ON "Product"(userId);
+        CREATE INDEX "Product_user_id_idx" ON "Product"(user_id);
     END IF;
 END $$;
 
@@ -63,7 +63,7 @@ END $$;
 DO $$ 
 BEGIN
     IF (SELECT COUNT(*) FROM "Product") = 0 THEN
-        INSERT INTO "Product" (name, price, userId, updatedAt) VALUES
+        INSERT INTO "Product" (name, price, user_id, updated_date) VALUES
         ('Laptop Pro', 1299.99, 1, CURRENT_TIMESTAMP),
         ('Wireless Mouse', 29.99, 1, CURRENT_TIMESTAMP),
         ('Office Chair', 199.99, 2, CURRENT_TIMESTAMP),

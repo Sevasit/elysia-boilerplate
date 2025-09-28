@@ -17,7 +17,7 @@ export class AuthService {
     try {
       const user = await this.userModel.createUser(username, password);
       return Response.success(201, "User created successfully", {
-        userId: user.id,
+        user_id: user.id,
       });
     } catch (error) {
       return Response.error(
@@ -31,7 +31,7 @@ export class AuthService {
   async login(
     username: string,
     password: string
-  ): Promise<ApiResponse<{ userId: number; username: string }>> {
+  ): Promise<ApiResponse<{ user_id: number; username: string }>> {
     const user = await this.userModel.findUserByUsername(username);
     if (!user) {
       return Response.error(401, "Invalid credentials", "Username not found");
@@ -46,7 +46,7 @@ export class AuthService {
     }
 
     return Response.success(200, "Login successful", {
-      userId: user.id,
+      user_id: user.id,
       username: user.username,
     });
   }

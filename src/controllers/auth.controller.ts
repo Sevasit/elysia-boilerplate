@@ -13,6 +13,7 @@ export const setupAuthController = (app: Elysia, userModel: UserModel) => {
         jwt({
           name: "jwt",
           secret: process.env.JWT_SECRET as string,
+          exp: process.env.EXPIRE_IN as string | "1h",
         })
       )
       .post(
@@ -47,11 +48,11 @@ export const setupAuthController = (app: Elysia, userModel: UserModel) => {
             return result;
           }
           const token = await jwt.sign(result.data);
-          cookie.jwt.set({
-            value: token,
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-          });
+          // cookie.jwt.set({
+          //   value: token,
+          //   httpOnly: true,
+          //   secure: process.env.NODE_ENV === "production",
+          // });
           return Response.success(200, result.message, { token });
         },
         {

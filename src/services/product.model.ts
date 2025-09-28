@@ -8,40 +8,36 @@ export class ProductService {
     this.productModel = productModel;
   }
 
-  async getAll(userId: number) {
-    const products = await this.productModel.findAllByUserId(userId);
+  async getAll() {
+    const products = await this.productModel.findAll();
     return Response.success(200, "Products retrieved successfully", products);
   }
 
-  async create(userId: number, data: { name: string; price: number }) {
-    const product = await this.productModel.create(userId, data);
+  async create(data: { name: string; price: number; user_id: number }) {
+    const product = await this.productModel.create(data);
     return Response.success(201, "Product created successfully", product);
   }
 
-  async update(
-    id: number,
-    userId: number,
-    data: Partial<{ name: string; price: number }>
-  ) {
+  async update(id: number, data: Partial<{ name: string; price: number }>) {
     const product = await this.productModel.findById(id);
-    if (!product || product.userId !== userId) {
+    if (!product) {
       return Response.error(
         404,
-        "Product not found",
-        "Product does not exist or belongs to another user"
+        "Cannot update product",
+        "Product does not exist"
       );
     }
     const updated = await this.productModel.update(id, data);
     return Response.success(200, "Product updated successfully", updated);
   }
 
-  async delete(id: number, userId: number) {
+  async delete(id: number) {
     const product = await this.productModel.findById(id);
-    if (!product || product.userId !== userId) {
+    if (!product) {
       return Response.error(
         404,
-        "Product not found",
-        "Product does not exist or belongs to another user"
+        "Cannot delete product",
+        "Product does not exist"
       );
     }
     await this.productModel.delete(id);

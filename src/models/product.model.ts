@@ -7,18 +7,14 @@ export class ProductModel {
     this.prisma = prisma;
   }
 
-  async findAllByUserId(userId: number) {
-    return this.prisma.product.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-    });
+  async findAll() {
+    return this.prisma.product.findMany();
   }
 
-  async create(userId: number, data: { name: string; price: number }) {
+  async create(data: { name: string; price: number; user_id: number }) {
     return this.prisma.product.create({
       data: {
         ...data,
-        userId,
       },
     });
   }
