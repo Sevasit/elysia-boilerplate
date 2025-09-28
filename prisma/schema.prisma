@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator prismabox { 
+  provider = "prismabox"
+  typeboxImportDependencyName = "elysia"
+  typeboxImportVariableName = "t"
+  inputModel = true
+  output   = "../generated/prismabox"
+} 
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  password String
+  created_date DateTime @default(now()) @map("created_date")
+  products Product[]
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  price       Float
+  created_date DateTime @default(now()) @map("created_date")
+  updated_date DateTime @default(now()) @map("updated_date")
+  user_id      Int
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}

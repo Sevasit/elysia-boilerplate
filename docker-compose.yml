@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: postgres_db
+      POSTGRES_USER: administrator
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U administrator -d postgres_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # app:
+  #   build: .
+  #   restart: always
+  #   environment:
+  #     DATABASE_URL: "postgresql://administrator:password@postgres:5432/elysia_db"
+  #     JWT_SECRET: "your-super-secret-jwt-key-change-in-prod"
+  #     NODE_ENV: "production"
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - postgres
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+
+volumes:
+  postgres_data:
