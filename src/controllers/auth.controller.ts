@@ -17,29 +17,6 @@ export const setupAuthController = (app: Elysia, userModel: UserModel) => {
         })
       )
       .post(
-        "/register",
-        async ({ body, set }) => {
-          const result = await authService.register(
-            body.username,
-            body.password
-          );
-          set.status = result.status_code;
-          return result;
-        },
-        {
-          body: t.Object({
-            username: t.String(),
-            password: t.String(),
-          }),
-          detail: {
-            tags: ["Auth"],
-            summary: "Register a new user",
-            description:
-              "Creates a user with hashed password. Returns user ID on success.",
-          },
-        }
-      )
-      .post(
         "/login",
         async ({ body, jwt, cookie, set }) => {
           const result = await authService.login(body.username, body.password);
