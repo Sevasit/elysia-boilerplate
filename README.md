@@ -2,7 +2,7 @@
 
 Elysia-Boilerplate API เป็น Starter Template สำหรับการพัฒนา REST API
 ด้วย [Elysia](https://elysiajs.com/) และ [Bun](https://bun.sh/)\
-โดยมี library เสริมเป็น [Prisma]([https://elysiajs.com/](https://www.prisma.io/)) เพื่อการทำ ORM เเละ jwt เพื่อทำ Authentication
+โดยมี library เสริมเป็น [Prisma](https://www.prisma.io/) เพื่อการทำ ORM เเละ jwt เพื่อทำ Authentication
 รองรับการใช้งานทั้ง **local development** และ **Docker Compose**
 
 ------------------------------------------------------------------------
